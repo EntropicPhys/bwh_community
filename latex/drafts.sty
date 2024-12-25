@@ -1,0 +1,154 @@
+%%
+%% drafts.sty -- Release: Sept. 3, 1992
+%% Author: H. Saiedian, U. of Nebraska at Omaha, hossein@unocss.unomaha.edu
+%% Usage:
+%%			\documentstyle[...,drafts,...]
+%%          ...
+%%          \pagestyle{drafts}
+%%
+%% This style puts the word |DRAFT| on the top and bottom of each page and
+%% then surrounds it with horizontal rule on both sides. Also date and
+%% time of when the drafts were printed are shown on the bottom of each
+%% each.
+%% 
+%% A slightly-modified version of fancyheading.sty is used. drafts.sty has
+%% three parts: fancyheadings stuff developed by Piet van Oostrum (Dept
+%% of Computer Science, University of Utrecht, The Netherlands), TeX code
+%% for getting the time, and the initializations. The initialization part
+%% at the end allows for customization.
+%
+%%--------------------------------------------------------------------------
+%%
+%% Slightly modified fancyheading.sty (developed by Piet van Oostrum)
+%
+\def\lhead{\@ifnextchar[{\@xlhead}{\@ylhead}}
+\def\@xlhead[#1]#2{\gdef\@elhead{#1}\gdef\@olhead{#2}}
+\def\@ylhead#1{\gdef\@elhead{#1}\gdef\@olhead{#1}}
+
+\def\chead{\@ifnextchar[{\@xchead}{\@ychead}}
+\def\@xchead[#1]#2{\gdef\@echead{#1}\gdef\@ochead{#2}}
+\def\@ychead#1{\gdef\@echead{#1}\gdef\@ochead{#1}}
+
+\def\rhead{\@ifnextchar[{\@xrhead}{\@yrhead}}
+\def\@xrhead[#1]#2{\gdef\@erhead{#1}\gdef\@orhead{#2}}
+\def\@yrhead#1{\gdef\@erhead{#1}\gdef\@orhead{#1}}
+
+\def\lfoot{\@ifnextchar[{\@xlfoot}{\@ylfoot}}
+\def\@xlfoot[#1]#2{\gdef\@elfoot{#1}\gdef\@olfoot{#2}}
+\def\@ylfoot#1{\gdef\@elfoot{#1}\gdef\@olfoot{#1}}
+
+\def\cfoot{\@ifnextchar[{\@xcfoot}{\@ycfoot}}
+\def\@xcfoot[#1]#2{\gdef\@ecfoot{#1}\gdef\@ocfoot{#2}}
+\def\@ycfoot#1{\gdef\@ecfoot{#1}\gdef\@ocfoot{#1}}
+
+\def\rfoot{\@ifnextchar[{\@xrfoot}{\@yrfoot}}
+\def\@xrfoot[#1]#2{\gdef\@erfoot{#1}\gdef\@orfoot{#2}}
+\def\@yrfoot#1{\gdef\@erfoot{#1}\gdef\@orfoot{#1}}
+
+\newdimen\headrulewidth
+\newdimen\footrulewidth
+\newdimen\plainheadrulewidth
+\newdimen\plainfootrulewidth
+\newdimen\headwidth
+\newif\if@drafts \@draftsfalse
+\def\drafts#1#2{\if@drafts#1\else#2\fi}
+
+% Initialization of the head and foot text.
+
+\headrulewidth 0pt
+\footrulewidth\z@
+
+\plainheadrulewidth\z@
+\plainfootrulewidth\z@
+
+\lhead{}
+\chead{}
+\rhead{}
+%
+\lfoot{}
+\cfoot{}
+\rfoot{}
+
+% Put together a header or footer given the left, center and
+% right text, fillers at left and right and a rule.
+% The \lap commands put the text into an hbox of zero size,
+% so overlapping text does not generate an errormessage.
+
+\def\@fancyhead#1#2#3#4#5{#1\hbox to\headwidth{\vbox{\hbox
+{\rlap{\parbox[b]{\headwidth}{\raggedright#2\strut}}\hfill
+\parbox[b]{\headwidth}{\centering#3\strut}\hfill
+\llap{\parbox[b]{\headwidth}{\raggedleft#4\strut}}}\headrule}}#5}
+
+
+\def\@fancyfoot#1#2#3#4#5{#1\hbox to\headwidth{\vbox{\footrule
+\hbox{\rlap{\parbox[t]{\headwidth}{\raggedright#2\strut}}\hfill
+\parbox[t]{\headwidth}{\centering#3\strut}\hfill
+\llap{\parbox[t]{\headwidth}{\raggedleft#4\strut}}}}}#5}
+
+\def\headrule{{\if@drafts\headrulewidth\plainheadrulewidth\fi
+\hrule\@height\headrulewidth\@width\headwidth \vskip-\headrulewidth}}
+
+\def\footrule{{\if@drafts\footrulewidth\plainfootrulewidth\fi
+\vskip-0.3\normalbaselineskip\vskip-\footrulewidth
+\hrule\@width\headwidth\@height\footrulewidth\vskip0.3\normalbaselineskip}}
+
+\def\ps@fancy{
+\let\@mkboth\markboth
+\@ifundefined{chapter}{\def\sectionmark##1{\markboth
+{\uppercase{\ifnum \c@secnumdepth>\z@
+ \thesection\hskip 1em\relax \fi ##1}}{}}
+\def\subsectionmark##1{\markright {\ifnum \c@secnumdepth >\@ne
+ \thesubsection\hskip 1em\relax \fi ##1}}}
+{\def\chaptermark##1{\markboth {\uppercase{\ifnum \c@secnumdepth>\m@ne
+ \@chapapp\ \thechapter. \ \fi ##1}}{}}
+\def\sectionmark##1{\markright{\uppercase{\ifnum \c@secnumdepth >\z@
+ \thesection. \ \fi ##1}}}}
+\def\@oddhead{\@fancyhead\relax\@olhead\@ochead\@orhead\hss}
+\def\@oddfoot{\@fancyfoot\relax\@olfoot\@ocfoot\@orfoot\hss}
+\def\@evenhead{\@fancyhead\hss\@elhead\@echead\@erhead\relax}
+\def\@evenfoot{\@fancyfoot\hss\@elfoot\@ecfoot\@erfoot\relax}
+\headwidth\textwidth}
+\def\ps@drafts{\ps@fancy \let\ps@plain\ps@plain@fancy}
+\def\ps@plain@fancy{\@draftstrue\ps@fancy}
+%
+%%--------------------------------------------------------------------------
+%
+%% Getting the time and using it via \now
+%
+\newcount\hour
+\newcount\minute
+\hour=\time
+\divide \hour by 60
+\minute=\time
+\loop \ifnum \minute > 59 \advance \minute by -60 \repeat
+\def\now{%
+\ifnum \hour<13
+\ifnum \hour<1 12:\else\number\hour:\fi
+\ifnum \minute<10 0\fi                 
+\number\minute%                      
+\ifnum \hour<12 \ AM \else \ PM \fi
+\else \advance \hour by -12 \number\hour:%
+\ifnum \minute<10 0\fi            
+\number\minute%                 
+\ PM \fi%
+}
+%
+%%--------------------------------------------------------------------------
+%
+%% Initializations
+% 
+\headrulewidth      0pt
+\footrulewidth		0pt
+\plainheadrulewidth	0pt
+\plainfootrulewidth	0pt
+%
+\lhead{}
+\chead{.\hrulefill\fbox{\large\sf DRAFT}\hrulefill}
+\rhead{}
+%
+\lfoot{}
+\cfoot{.\hrulefill\fbox{\large\sf DRAFT}\hrulefill \\
+       \sf \today \hspace{1mm} \now \hfill \thepage}
+\rfoot{}
+%%--------------------------------------------------------------------------
+\endinput

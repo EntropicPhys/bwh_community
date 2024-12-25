@@ -1,0 +1,18 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{FPB{\etalchar{+}}24}
+
+\bibitem[FPB{\etalchar{+}}24]{FPBUM24}
+M.~A. Ferr\'e, I.~Pavithran, B.~Bera, H.~Uecker, and E.~Meron.
+\newblock Vegetation pattern formation and community assembly under drying
+  climate trends, 2024.
+
+\bibitem[Uec21]{p2pbook}
+H.~Uecker.
+\newblock {\em Numerical continuation and bifurcation in Nonlinear PDEs}.
+\newblock SIAM, Philadelphia, PA, 2021.
+
+\bibitem[Uec24]{p2phome}
+H.~Uecker.
+\newblock {\url{www.staff.uni-oldenburg.de/hannes.uecker/pde2path}}, 2024.
+
+\end{thebibliography}
