@@ -23,7 +23,7 @@ bwhRS/
 │   ├── uplot1.m           # Special windows plot for continuation
 │   ├── uplot2.m           # Only plot <B(.,chi)>  over chi 
 │   ├── uplot3.m           # Also plot al(chi) for B_t=al(chi)*B+D_chi*B''
-│   ├── tintxs.m           # Direct numerical simulation based on Euler
+│   ├── tintxs.m           # Direct numerical simulation based on semi-implicit integration,
 │   └── bwhinit.m          # Model initialization
 ├── single_species_model/
 │   ├── sG.m               # RHS for single species
