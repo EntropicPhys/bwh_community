@@ -34,7 +34,7 @@ b0 = 5.25; w0 = 3.15;
 h0 = pp * (Yi * b0 + Q) / (A * (Yi * b0 + f * Q));  % Water balance formula
 
 % Output folder
-dir0 = 'aaa';
+dir0 = 's1';
 dir = [dir0 '/hom'];
 
 %% === Initialize p-structure and run homogeneous branch ===
