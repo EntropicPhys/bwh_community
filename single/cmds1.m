@@ -2,6 +2,16 @@
 % This script computes the homogeneous solution branch and two patterned branches (T1, T2)
 % for a 1D spatial vegetation model using pde2path. Assumes bwhinit.m defines the PDE.
 
+% === Trait-based parameter: chi ===
+% The parameter `chi` represents a phenotypic trait linked to plant functionality,
+% such as water-use efficiency or rooting strategy. In the supplementary material,
+% we explore two cases:
+%   - chi = 0: corresponds to fast-growing species
+%   - chi = 1: corresponds to stress-tolerant species
+% These cases help illustrate how different species or functional types can affect
+% pattern formation in the vegetation model.
+
+
 close all; keep p2phome;
 global p2pglob; p2pglob.ps = 1; % Set plot style (1 = classic, 2 = fancy)
 
@@ -34,7 +44,7 @@ b0 = 5.25; w0 = 3.15;
 h0 = pp * (Yi * b0 + Q) / (A * (Yi * b0 + f * Q));  % Water balance formula
 
 % Output folder
-dir0 = 's1';
+dir0 = 's1'; % usually linked with chi=1
 dir = [dir0 '/hom'];
 
 %% === Initialize p-structure and run homogeneous branch ===
