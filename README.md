@@ -12,20 +12,29 @@ bwhRS/
 ├── community_model/
 │   ├── sG.m               # RHS of community model equations
 │   ├── sGjac.m            # Analytical Jacobian
+│   ├── bwhinit.m          # Set up starter pde2path struct. 
+│   ├── sgbra.m            # Output quantifiers for cont.
 │   ├── oosetfemops.m      # FEM matrix setup
+│   ├── bfbb.m             # Stability range extraction from branches
+│   ├── cswibra.m          # Modified version of cswibra for plotting purposes
+│   ├── nplotbra.m         # Same as plotbra, with added normalization (1st argument) 
+│   ├── sGdns.m            # Treat the chi-diffusion explicitly/ used for tintxs
+│   ├── cswibra.m          # modified version of cswibra for plotting purposes
+│   ├── uplot1.m           # Special windows plot for continuation
+│   ├── uplot2.m           # Only plot <B(.,chi)>  over chi 
+│   ├── uplot3.m           # Also plot al(chi) for B_t=al(chi)*B+D_chi*B''
+│   ├── tintxs.m           # Direct numerical simulation based on Euler
 │   └── bwhinit.m          # Model initialization
 ├── single_species_model/
 │   ├── sG.m               # RHS for single species
 │   ├── sGjac.m            # Jacobian for single species
-│   ├── oosetfemops.m
-│   └── bwhinit.m
-├── cmds/
+│   ├── oosetfemops.m      # FEM matrix setup 
+│   ├── bwhinit.m          # Model initialization
+│   ├── sgbra.m            # Output quantifiers for cont.
+│   ├── bpjac.m            # Matrix necessary for bif-cont.
 │   ├── cmds1.m            # Continuation: homogeneous + Turing branches
 │   └── cmds2.m            # Brute-force Busse-Balloon computation
-├── utils/
-│   └── bfbb.m             # Stability range extraction from branches
-└── results/
-    └── comm/              # Output directories (e.g. hom, T1, T2, ...)
+
 ```
 
 ---
