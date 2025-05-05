@@ -90,7 +90,7 @@ plotbra([dir0 '/T2'],  'cl', colT2,  'tyun', '--', 'cmp', 1);
 
 xlabel('Precipitation'); ylabel('||u||');
 
-% Example positions (adjust as needed)
+% Example positions 
 text(270, 4.9, 'Hom', 'Color', colHom, 'FontSize', 11, 'FontWeight', 'bold');
 text(295, 5.2, 'Turing 1', 'Color', colT1, 'FontSize', 11, 'FontWeight', 'bold');
 text(310, 4.7, 'Turing 2', 'Color', colT2, 'FontSize', 11, 'FontWeight', 'bold');
