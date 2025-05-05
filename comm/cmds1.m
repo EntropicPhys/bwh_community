@@ -9,14 +9,14 @@ p2pglob.ps = 1;    % plot style
 % Domain and discretization
 lx = 90;           % spatial domain length
 nx = 350;          % number of grid points
-N  = 33;           % number of trait bins (chi values)
+N  = 35;           % number of trait bins (chi values)
 
 % Initial condition selector
 aux.solve = 1;
 aux.sw    = 1;      % selects type of initial trait-distribution
 
 % System parameters
-pp = 300; Lam0 = 8; Ga = 10; A = 3000; L0 = 200; f = 0.01;
+pp = 285; Lam0 = 8; Ga = 10; A = 3000; L0 = 200; f = 0.01;
 Q = 12; R = 0.7;
 chimin = 0; chimax = 1;
 Kmin = 6.7; Kmax = 35.599;
@@ -39,23 +39,28 @@ p = bwhinit(lx, nx, N, par, dir, aux);
 %% === Time Integration to Relax to Steady State ===
 % Useful for a good initial guess for Newton
 t1 = 0; ts = [];
-dt = 2e-3; nt = 4e4; nc = 0;
-pmod = nt / 20; smod = pmod;
+dt = 3e-3; nt = 8e4; nc = 0;
+pmod = nt / 10; smod = pmod;
 
 [p, t1, ts, nc] = tintxs(p, t1, ts, dt, nt, nc, pmod, smod, @sGdns);
 
 %% === Newton Iteration to Find Steady State ===
-p.nc.tol = 1e-11;
+p.nc.tol = 1e-11;p.nc.almin=0.25;p.nc.bisecmax=15;     
 [p.u, p.r, iter] = nloop(p, p.u);
 fprintf('res = %g, iter = %i\n', norm(p.r, Inf), iter);
 plotsol(p);
 
+%% checking jac; Best option is assembled Gu
+p.fuha.sGjac=@sGjac; % brute force, slightly faster! 
+[Gu,Gn]=jaccheck(p);Gd=abs(Gu-Gn); em=max(max(Gd)); 
+mclf(20); spy(Gd>em/2);
+
 %% === Homogeneous Branch Continuation ===
-p.nc.ilam = 1;          % Index of parameter to continue (1 = precipitation)
-p.sol.ds = -1;          % Initial continuation step size
+p.sol.ds = -5e-1;          % Initial continuation step size
 p.sw.bifcheck = 2;      % Enable bifurcation detection
-p.nc.tol = 1e-10;       % Tolerance for Newton step during continuation
-p.sw.verb = 2;          % Verbosity level
+p.nc.tol = 1e-8;       % Tolerance for Newton step during continuation
+p.nc.eigref=-0.1;
+p.sw.spcalc=1;
 
 tic;
 p = cont(p, 30);        % Continue for 30 steps
@@ -86,26 +91,37 @@ p = setfn(p, dirT);
 p.sol.ds = 1e-1;
 p = cont(p, 300);
 
-%% === Plotting Bifurcation Branches ===
-figure;
+%% === Plot all branches with different green shades ===
+% === Colors for each branch ===
+colHom = [0.39216      0.83137      0.07451];
+colT1 = [0.40784      0.52941      0.25098];
+colT2 = [0.64314      0.81176      0.42745];
+
 
 % Homogeneous solution branch (green)
-plotbra('comm/hom', 'cl', [0 0.6 0], ...
-        'tyun', '--', 'cmp', 3, 'bplab', 1, 'lab', 20);
+plotbra('comm/hom', 'cl', colHom, ...
+        'tyun', '--', 'cmp', 3);
 
 % T1 (first pattern) (light blue)
-plotbra('comm/T1', 'cl', [0 0.6 1], ...
-        'tyun', '--', 'cmp', 3, 'bplab', [1 2], 'lab', 260);
+plotbra('comm/T1', 'cl', colT1, ...
+        'tyun', '--', 'cmp', 3);
 
 % T2 (second pattern) (red)
-plotbra('comm/T2', 'cl', 'r', ...
-        'tyun', '--', 'cmp', 3, 'bplab', [1 2], 'lab', 260);
+plotbra('comm/T2', 'cl', colT2, ...
+        'tyun', '--', 'cmp', 3);
 
-ylabel('$\langle \chi_{max} \rangle$', 'Interpreter', 'latex');
+ylabel('$ \chi_{max}$', 'Interpreter', 'latex');
 xlabel('$P$', 'Interpreter', 'latex');
+
+% Example positions (adjust as needed)
+text(302, 0.66, 'Hom', 'Color', colHom, 'FontSize', 11, 'FontWeight', 'bold');
+text(400, 0.43, 'Turing 1', 'Color', colT1, 'FontSize', 11, 'FontWeight', 'bold');
+text(338, 0.46, 'Turing 2', 'Color', colT2, 'FontSize', 11, 'FontWeight', 'bold');
+box on 
 
 %% === Plotting Solution Snapshots ===
 % These correspond to specific solution points along the branches
 plotsol('comm/hom', 'pt20',  'pfig', 1);  % Homogeneous state
 plotsol('comm/T1',  'pt260', 'pfig', 2);  % First patterned state
 plotsol('comm/T2',  'pt260', 'pfig', 3);  % Second patterned state
+
