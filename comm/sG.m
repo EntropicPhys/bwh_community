@@ -1,33 +1,93 @@
-function r=sG(p,u) % RHS of bwh-community
-N=p.N; n=p.np; b=reshape(u(1:N*n),n,N);     % field assign. 
-w=u(N*n+1:(N+1)*n); h=u((N+1)*n+1:(N+2)*n);  
-par=u(p.nu+1:end);pp=par(1);Lam0=par(2);Ga=par(3); % syst. params
-A=par(4);R=par(5);L0=par(6);f=par(7);Q=par(8);
-Kmin=par(9);Kmax=par(10); Mmin=par(11); Mmax=par(12); 
-Ymin=par(13);Ymax=par(14);Db=par(15);Dw=par(16); 
-Dh=par(17);Dchi=par(18);chimin=par(19);chimax=par(20); 
-K=p.mat.K; M=p.mat.M(1:n,1:n); % Stiffness and Mass matrices 
-ov=ones(n,1);bt=zeros(n,1); btt=bt;% b-tilde and b-tilde-tilde
-chii=linspace(chimin,chimax,N);dchi=chii(2)-chii(1);  
-for i=1:N % fill bt and btt 
-    bt=bt+b(:,i); 
-    Yi=Ymax+chii(i)*(Ymin-Ymax); 
-    btt=btt+b(:,i)*Yi; 
-end 
-I=A*(btt+f*Q)./(btt+Q); L=ov*L0./(1+R*bt); % infil. and evapo. funcs 
-for i=1:N    %loop that assemble the finite-difference scheme
-    Ki=Kmax+chii(i)*(Kmin-Kmax);  
-    Mi=Mmax+chii(i)*(Mmin-Mmax); 
-    Lami=Lam0*Ki./(bt+Ki); 
-    bi=b(:,i);    
-    switch i  % chi-diffusion terms, i=1 and i=N with Neumann BCs 
-        case 1; bcc=(b(:,2)-2*b(:,1))/dchi^2;
-        case N;  bcc=(-2*b(:,N)+b(:,N-1))/dchi^2; 
-        otherwise; bcc=(b(:,i+1)-2*b(:,i)+b(:,i-1))/dchi^2; 
-    end    
-    r1=-M*(Lami.*w.*bi-Mi*bi+Dchi*bcc)+Db*K*bi; 
-    r((i-1)*n+1:i*n)=r1; 
+function r = sG(p, u)
+% sG — RHS for trait-structured biomass-water-hydrology (bwh) community model
+%
+% Computes:
+%   - Biomass dynamics B(x,chi)
+%   - Soil water dynamics W(x)
+%   - Surface water dynamics H(x)
+%
+% The model includes:
+%   - Trait diffusion (finite differences)
+%   - Space diffusion (finite elements)
+%   - Trait-dependent uptake, mortality, and infiltration
+
+% === Unpack field variables ===
+N = p.N;            % Number of traits
+n = p.np;           % Number of spatial grid points
+
+b = reshape(u(1:N*n), n, N);               % Biomass: B(x,chi)
+w = u(N*n+1 : (N+1)*n);                    % Soil water
+h = u((N+1)*n+1 : (N+2)*n);                % Surface water
+
+% === Unpack parameters ===
+par = u(p.nu+1:end);
+[pp, Lam0, Ga, A, R, L0, f, Q, ...
+ Kmin, Kmax, Mmin, Mmax, Ymin, Ymax, ...
+ Db, Dw, Dh, Dchi, chimin, chimax] = deal(par{:});
+
+% === FEM Matrices ===
+K = p.mat.K;             % Stiffness matrix (diffusion operator)
+M = p.mat.M(1:n, 1:n);   % Mass matrix
+
+% === Precomputed quantities ===
+ov  = ones(n, 1);
+bt  = zeros(n, 1);   % Trait-aggregated biomass: sum_i b_i(x)
+btt = zeros(n, 1);   % Weighted biomass: sum_i Yi * b_i(x)
+
+chii = linspace(chimin, chimax, N);  % Trait values
+dchi = chii(2) - chii(1);            % Trait discretization step
+
+% === Compute trait-integrated quantities ===
+for i = 1:N
+    bi = b(:, i);
+    Yi = Ymax + chii(i) * (Ymin - Ymax);
+    bt  = bt + bi;         % Total biomass
+    btt = btt + Yi * bi;   % Weighted by Yi
 end
-r2=-M*(I.*h-L.*w-Ga.*bt.*w)+Dw*K*w;
-r3=-M*(pp-I.*h)+Dh*K*h;   
-r=[r;r2;r3]; 
+
+% Infiltration and evaporation functions (nonlinear terms)
+I = A * (btt + f * Q) ./ (btt + Q);        % Infiltration rate
+L = L0 ./ (1 + R * bt);                    % Evaporation rate
+
+% === Initialize residual vector for all components ===
+r = zeros(p.nu, 1);
+
+% === Biomass dynamics for each trait ===
+for i = 1:N
+    bi = b(:, i);
+
+    % Trait-dependent uptake and mortality
+    Ki   = Kmax + chii(i) * (Kmin - Kmax);
+    Mi   = Mmax + chii(i) * (Mmin - Mmax);
+    Lami = Lam0 * Ki ./ (bt + Ki);  % Resource-limited growth
+
+    % Trait diffusion (finite-difference approximation with Neumann BC)
+    switch i
+        case 1
+            bcc = (b(:, 2) - 2 * b(:, 1)) / dchi^2;
+        case N
+            bcc = (-2 * b(:, N) + b(:, N - 1)) / dchi^2;
+        otherwise
+            bcc = (b(:, i+1) - 2 * b(:, i) + b(:, i-1)) / dchi^2;
+    end
+
+    % RHS for B_i(x)
+    growth = Lami .* w .* bi;
+    mortality = Mi * bi;
+    traitDiff = Dchi * bcc;
+    spaceDiff = Db * K * bi;
+
+    r_bi = -M * (growth - mortality + traitDiff) + spaceDiff;
+
+    % Insert into global residual
+    r((i - 1) * n + 1 : i * n) = r_bi;
+end
+
+% === Water (w) dynamics ===
+r_w = -M * (I .* h - L .* w - Ga * bt .* w) + Dw * K * w;
+
+% === Surface water (h) dynamics ===
+r_h = -M * (pp - I .* h) + Dh * K * h;
+
+% === Concatenate all components into final residual vector ===
+r = [r; r_w; r_h];
