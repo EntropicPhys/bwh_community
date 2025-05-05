@@ -12,6 +12,7 @@ bwhRS/
 ├── community_model/
 │   ├── sG.m               # RHS of community model equations
 │   ├── sGjac.m            # Analytical Jacobian
+│   ├── bwhinit.m          # Model initialization
 │   ├── bwhinit.m          # Set up starter pde2path struct. 
 │   ├── sgbra.m            # Output quantifiers for cont.
 │   ├── oosetfemops.m      # FEM matrix setup
@@ -24,7 +25,8 @@ bwhRS/
 │   ├── uplot2.m           # Only plot <B(.,chi)>  over chi 
 │   ├── uplot3.m           # Also plot al(chi) for B_t=al(chi)*B+D_chi*B''
 │   ├── tintxs.m           # Direct numerical simulation based on semi-implicit integration,
-│   └── bwhinit.m          # Model initialization
+│   ├── bdbdt7.m           # Transient Dynamics under Precipitation Changes
+│   └── bbdns.m            # Time integration with continuously varying precipitation 
 ├── single_species_model/
 │   ├── sG.m               # RHS for single species
 │   ├── sGjac.m            # Jacobian for single species
