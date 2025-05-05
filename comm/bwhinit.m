@@ -10,6 +10,7 @@ p = [];
 p = stanparam(p);                     % Initialize standard p-structure
 p = setfn(p, dir);                    % Set directory for results
 p.fuha.outfu = @sgbra;               % Output function for branch data
+p.sw.verb = 2;                       % Verbosity level
 
 % === Define PDE domain (1D) and FEM discretization ===
 pde = stanpdeo1Db(0, lx, lx / nx);   % Standard 1D pdeo object over [0, lx] with nx elements
@@ -24,6 +25,8 @@ p.ndim = 1;                          % Spatial dimension
 p.vol = lx;                          % Domain length
 p.nu = p.np * p.nc.neq;              % Total number of degrees of freedom
 p.sol.xi = 0.1 / p.nu;               % Arclength continuation parameter
+
+
 
 % === Trait discretization and initial condition setup ===
 ov = ones(n, 1);                     % Vector of ones for spatial profile
@@ -68,5 +71,6 @@ p = oosetfemops(p);                  % Assemble FEM matrices
 p.plot.pstyle = -1;                 % Use user-defined plotting style
 p.plot.bpcmp = 2;                    % Branch plotting component (e.g. water)
 p.plot.pcmp = 2;                     % Solution plotting component
-p.nc.ilam = 1;                       % Index of parameter to continue (e.g. precipitation)
+p.nc.ilam = 1;          % Index of parameter to continue (1 = precipitation)
+p.frcut=0.0001; 
 end
