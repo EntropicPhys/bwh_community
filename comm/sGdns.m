@@ -15,7 +15,12 @@ h = u((N+1)*n+1 : (N+2)*n);                      % Surface water H(x)
 par = u(p.nu+1:end);
 [pp, Lam0, Ga, A, R, L0, f, Q, ...
  Kmin, Kmax, Mmin, Mmax, Ymin, Ymax, ...
- Db, Dw, Dh, Dchi, chimin, chimax] = deal(par{:});
+ Db, Dw, Dh, Dchi, chimin, chimax] = deal( ...
+    par(1), par(2), par(3), par(4), par(5), ...
+    par(6), par(7), par(8), par(9), par(10), ...
+    par(11), par(12), par(13), par(14), ...
+    par(15), par(16), par(17), par(18), ...
+    par(19), par(20) );
 
 % === FEM Matrices (used only for mass matrix) ===
 K = p.mat.K;                % Stiffness matrix (unused here)
@@ -38,18 +43,15 @@ end
 
 % === Biomass dynamics: loop over traits ===
 for i = 1:N
+    bi = b(:, i);
     chii = chimin + (i-1)*dchi;
-
     % Trait-dependent coefficients
     Mi   = Mmax + chii * (Mmin - Mmax);
     Ki   = Kmax + chii * (Kmin - Kmax);
     Lami = Lam0 * Ki ./ (bt + Ki);
-    I    = A * (btt + f * Q) ./ (btt + Q);
-    L    = L0 ./ (1 + R * bt);
+    
 
-    bi = b(:, i);
-
-    % Trait diffusion (explicit in chi)
+    % Trait diffusion  (finite-difference approximation with Neumann BC)
     switch i
         case 1
             bcc = (b(:, 2) - 2 * b(:, 1)) / dchi^2;
@@ -68,10 +70,13 @@ end
 
 % === Water and Surface Water Equations ===
 % Note: Spatial diffusion terms are omitted
-I = A * (btt + f * Q) ./ (btt + Q);
-L = L0 ./ (1 + R * bt);
+I = A * (btt + f * Q) ./ (btt + Q);        % Infiltration rate
+L = L0 ./ (1 + R * bt);                    % Evaporation rate
 
+% === Water (w) dynamics ===
 r_w = -M * (I .* h - L .* w - Ga * w .* bt);
+
+% === Surface water (h) dynamics ===
 r_h = -M * (pp - I .* h);
 
 % === Final assembled RHS ===
