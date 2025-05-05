@@ -39,14 +39,6 @@ bwhRS/
 
 ---
 
-## 🚀 Getting Started
-
-```matlab
-addpath(genpath('bwhRS'));
-cmds1; % Runs the main continuation for the community model
-cmds2; % Computes the Busse-Balloon by extracting stability info
-```
-
 **Requirements**:
 - MATLAB (R2020 or later)
 - [pde2path](https://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/)
