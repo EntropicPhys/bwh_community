@@ -5,11 +5,16 @@ b = u(1:n);
 w = u(n+1:2*n);
 h = u(2*n+1:3*n);
 
-% Unpack system parameters
-par = u(p.nu + 3*n + 1 : end);
-[pp, Lam0, Ga, A, R, L0, f, Q, Kmin, Kmax, Mmin, Mmax, ...
- Ymin, Ymax, Db, Dw, Dh, chi] = deal(par{:});
-
+%--- Unpack parameters ---%
+pp   = par(1);  Lam0 = par(2);  Ga   = par(3); 
+A    = par(4);  R    = par(5);  L0   = par(6);
+f    = par(7);  Q    = par(8);  
+Kmin = par(9);  Kmax = par(10);
+Mmin = par(11); Mmax = par(12);
+Ymin = par(13); Ymax = par(14);
+Db   = par(15); Dw   = par(16); Dh = par(17);
+chi  = par(18); 
+l    = par(19);                  % Spatial scaling factor
 % Derived trait-dependent quantities
 ov  = ones(n,1);
 Yi  = Ymax + chi * (Ymin - Ymax);
