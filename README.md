@@ -20,12 +20,11 @@ bwhRS/
 │   ├── cswibra.m          # Modified version of cswibra for plotting purposes
 │   ├── nplotbra.m         # Same as plotbra, with added normalization (1st argument) 
 │   ├── sGdns.m            # Treat the chi-diffusion explicitly/ used for tintxs
-│   ├── cswibra.m          # modified version of cswibra for plotting purposes
 │   ├── uplot1.m           # Special windows plot for continuation
 │   ├── uplot2.m           # Only plot <B(.,chi)>  over chi 
 │   ├── uplot3.m           # Also plot al(chi) for B_t=al(chi)*B+D_chi*B''
 │   ├── tintxs.m           # Direct numerical simulation based on semi-implicit integration,
-│   ├── bdbdt7.m           # Transient Dynamics under Precipitation Changes
+│   ├── bdbdt.m            # Transient Dynamics under Precipitation Changes
 │   └── bbdns.m            # Time integration with continuously varying precipitation 
 ├── single_species_model/
 │   ├── sG.m               # RHS for single species
@@ -34,6 +33,7 @@ bwhRS/
 │   ├── bwhinit.m          # Model initialization
 │   ├── sgbra.m            # Output quantifiers for cont.
 │   ├── bpjac.m            # Matrix necessary for bif-cont.
+│   ├── tint.m           # Direct numerical simulation based on semi-implicit integration,
 │   ├── cmds1.m            # Continuation: homogeneous + Turing branches
 │   └── cmds2.m            # Brute-force Busse-Balloon computation
 
@@ -69,7 +69,7 @@ bwhRS/
 ## 📎 References
 
 - Main paper: [FPBUM24], *submitted/in preparation*
-- For `pde2path`: Uecker (2021), Rademacher & Uecker (2018)
+- For `pde2path`: Uecker (2021), Rademacher & Uecker (2018). https://pde2path.uol.de/tutorials.html
 
 
 ---
