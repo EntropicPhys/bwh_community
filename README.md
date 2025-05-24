@@ -72,17 +72,4 @@ bwhRS/
 - For `pde2path`: Uecker (2021), Rademacher & Uecker (2018). https://pde2path.uol.de/tutorials.html
 
 
----
-
-## 🧱 About OOPDE
-
-**OOPDE** (*Object-Oriented Partial Differential Equations*) is a MATLAB framework for finite element discretization and PDE handling. It provides the underlying data structures used in `pde2path`, offering:
-
-- Object-oriented setup of FEM problems
-- Efficient assembly of mass and stiffness matrices
-- Handling of boundary conditions and domain structures
-- Support for mesh refinement and matrix reuse
-
-Unlike MATLAB’s PDE Toolbox, OOPDE gives users full access to the internals of FEM discretization, making it ideal for custom continuation, bifurcation tracking, and PDE analysis.
-
-**Note**: OOPDE is bundled with `pde2path` and does not require separate installation.
+--- and does not require separate installation.
