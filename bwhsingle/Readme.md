@@ -1,4 +1,4 @@
-# Bifurcation Analysis of a Trait-Based Community Model
+# Bifurcation Analysis of a Single-Species Model
 
 This repository contains MATLAB code for generating bifurcation diagrams in a single-species model. 
 
