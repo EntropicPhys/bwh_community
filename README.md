@@ -73,3 +73,6 @@ bwhRS/
 
 
 --- and does not require separate installation.
+
+[![DOI](https://zenodo.org/badge/865242962.svg)](https://doi.org/10.5281/zenodo.15714557)
+
