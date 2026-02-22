@@ -71,7 +71,5 @@ bwhRS/
 - For `pde2path`: Uecker (2021), Rademacher & Uecker (2018). https://pde2path.uol.de/tutorials.html
 
 
---- and does not require separate installation.
-
 [![DOI](https://zenodo.org/badge/865242962.svg)](https://doi.org/10.5281/zenodo.15714557)
 
