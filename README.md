@@ -44,7 +44,6 @@ bwhRS/
 **Requirements**:
 - MATLAB (R2020 or later)
 - [pde2path](https://www.staff.uni-oldenburg.de/hannes.uecker/pde2path/)
-- OOPDE library (included or linked from pde2path)
 
 ---
 
